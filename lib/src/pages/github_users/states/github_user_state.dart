@@ -1,6 +1,6 @@
 import 'package:value_notifier/src/pages/github_users/models/github_user_model.dart';
 
-abstract class GithubUserState {}
+sealed class GithubUserState {}
 
 //Inicial
 class InitialGithubUserState extends GithubUserState {}

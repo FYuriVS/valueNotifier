@@ -4,6 +4,7 @@ import 'package:value_notifier/src/pages/github_users/states/github_user_state.d
 
 class GithubUserStore extends ValueNotifier<GithubUserState> {
   final GithubUserService githubUserService;
+  var moreInformations = false;
 
   GithubUserStore(this.githubUserService) : super(InitialGithubUserState());
 
@@ -19,5 +20,10 @@ class GithubUserStore extends ValueNotifier<GithubUserState> {
     } else {
       value = ErrorGithubUserState("Digite o nome de algum usuário!");
     }
+  }
+
+  bool toggleMoreInformations(bool value) {
+    moreInformations = !value;
+    return moreInformations;
   }
 }
