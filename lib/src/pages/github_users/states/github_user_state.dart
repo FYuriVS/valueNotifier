@@ -14,6 +14,14 @@ class SuccessGithubUserState extends GithubUserState {
 //Loading
 class LoadingGithubUserState extends GithubUserState {}
 
+//Details
+class MoreInfoGithubUserState extends GithubUserState {
+  final GithubUser githubUser;
+  MoreInfoGithubUserState(this.githubUser);
+}
+
+class LessInfoGithubUserState extends GithubUserState {}
+
 //Error
 class ErrorGithubUserState extends GithubUserState {
   final String message;

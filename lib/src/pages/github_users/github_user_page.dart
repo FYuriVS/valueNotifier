@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
-import 'package:uno/uno.dart';
-import 'package:value_notifier/src/pages/github_users/services/github_service.dart';
 import 'package:value_notifier/src/pages/github_users/states/github_user_state.dart';
 import 'package:value_notifier/src/pages/github_users/stores/github_user_store.dart';
 
@@ -20,6 +19,7 @@ class _GithubUserPageState extends State<GithubUserPage> {
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance.addPersistentFrameCallback((_) {
       context.read<GithubUserStore>();
     });
@@ -29,7 +29,7 @@ class _GithubUserPageState extends State<GithubUserPage> {
   Widget build(BuildContext context) {
     final store = context.watch<GithubUserStore>();
     final state = store.value;
-    late Widget child;
+    Widget? child;
     if (state is LoadingGithubUserState) {
       child = const Center(
         child: CircularProgressIndicator(),
@@ -60,48 +60,105 @@ class _GithubUserPageState extends State<GithubUserPage> {
                       const SizedBox(
                         width: 10,
                       ),
-                      Row(
-                        children: [
-                          const Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                      Expanded(
+                        child: Container(
+                          child: Column(
                             children: [
-                              Text("Name:", style: TextStyle(fontSize: 11)),
-                              Text("Location:", style: TextStyle(fontSize: 11)),
-                              Text("Public Repositories:",
-                                  style: TextStyle(fontSize: 11)),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text("Name:",
+                                      style: TextStyle(fontSize: 11)),
+                                  Text(
+                                    state.githubUser.name,
+                                    style: const TextStyle(fontSize: 11),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text("Location:",
+                                      style: TextStyle(fontSize: 11)),
+                                  Text(
+                                    state.githubUser.location,
+                                    style: const TextStyle(fontSize: 11),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text("Public Repositories:",
+                                      style: TextStyle(fontSize: 11)),
+                                  Text(
+                                    state.githubUser.publicRepos.toString(),
+                                    style: const TextStyle(fontSize: 11),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
+                                ],
+                              ),
                             ],
                           ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                state.githubUser.name,
-                                style: const TextStyle(fontSize: 11),
-                              ),
-                              Text(
-                                state.githubUser.location,
-                                style: const TextStyle(fontSize: 11),
-                              ),
-                              Text(
-                                state.githubUser.publicRepos.toString(),
-                                style: const TextStyle(fontSize: 11),
-                              ),
-                            ],
-                          ),
-                        ],
+                        ),
                       ),
                     ],
                   ),
                   Column(
                     children: [
-                      store.moreInformations
+                      _moreInformations
                           ? Column(
-                              children: [Text(state.githubUser.blog)],
+                              children: [
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 8.0),
+                                  child: Divider(
+                                    height: 1,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                Text(
+                                  state.githubUser.bio,
+                                  style: const TextStyle(fontSize: 11),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 5,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text(
+                                      "site: ",
+                                      style: TextStyle(fontSize: 11),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
+                                    Text(
+                                      state.githubUser.blog,
+                                      style: const TextStyle(fontSize: 11),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
+                                  ],
+                                ),
+                              ],
                             )
-                          : const SizedBox()
+                          : const SizedBox(
+                              height: 0,
+                            )
                     ],
                   ),
                 ],
@@ -117,8 +174,8 @@ class _GithubUserPageState extends State<GithubUserPage> {
                 ),
                 onPressed: () {
                   setState(() {
-                    _moreInformations =
-                        store.toggleMoreInformations(_moreInformations);
+                    _moreInformations = toggleMoreDetails(_moreInformations);
+                    FocusScope.of(context).unfocus();
                   });
                 },
               ),
@@ -175,6 +232,7 @@ class _GithubUserPageState extends State<GithubUserPage> {
                   ),
                   onPressed: () {
                     store.fetchUser(_inputController.text);
+                    _moreInformations = false;
                   },
                   child: const Icon(
                     Icons.search,
@@ -186,10 +244,14 @@ class _GithubUserPageState extends State<GithubUserPage> {
             const SizedBox(
               height: 10,
             ),
-            child
+            child ?? Container()
           ],
         ),
       ),
     );
+  }
+
+  bool toggleMoreDetails(bool value) {
+    return !value;
   }
 }

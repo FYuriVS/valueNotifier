@@ -22,8 +22,7 @@ class GithubUserStore extends ValueNotifier<GithubUserState> {
     }
   }
 
-  bool toggleMoreInformations(bool value) {
-    moreInformations = !value;
-    return moreInformations;
-  }
+  // bool toggleMoreInformations(bool value) {
+  //   return !value;
+  // }
 }
